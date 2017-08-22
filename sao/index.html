@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        html{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            width: 100%;
+            height: 100%;
+            background-image: url(img/4.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            padding-top: 50px;
+            overflow: hidden;
+        }
+        .sence {
+            width: 500px;
+            height: 500px;
+            border-left: 1px solid #ccc;
+            border-top: 1px solid #ccc;
+            margin: 0 auto;
+        }
+
+        * {
+            list-style: none;
+        }
+
+        .block {
+            width: 49px;
+            height: 49px;
+            float: left;
+            background: #000;
+            border-radius: 10px;
+            background-image: url(img/5.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-right: 1px solid #e6e6e6;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .show {
+            background: url(img/1.jpg) no-repeat center;
+            background-size: cover;
+        }
+
+        .control {
+            padding-top: 50px;
+            width: 200px;
+            height: 100%;
+            position: fixed;
+            right: 50%;
+            margin-right: -500px;
+            top: 0;
+        }
+
+        .num {
+            background: #fff;
+            font-size: 20px;
+            line-height: 49px;
+            text-align: center;
+        }
+
+        .flag {
+            background: url(img/2.jpg) no-repeat center;
+            background-size: cover;
+        }
+
+        .flagnum {
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+        }
+
+        .restart, .flagnum, .paihang, time, .nd {
+            display: block;
+            height: 50px;
+            width: 200px;
+            background: #666;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .nd {
+            position: relative;
+        }
+
+        .nandu {
+            height: 150px;
+            width: 200px;
+            background: #666666;;
+            margin: 10px 0 0 0;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #fff;
+            padding: 0;
+            z-index: 10;
+            position: absolute;
+            left: 0;
+            top: 50px;
+            display: none;
+        }
+
+        .paihangbang {
+            height: 200px;
+            width: 200px;
+            background: #666666;;
+            margin: 10px 0 0 0;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #fff;
+            padding: 0;
+            display: none;
+        }
+
+        h1 {
+            width: 100%;
+            text-align: center;
+            margin: 0;
+            margin-bottom: 20px;
+            height: 30px;
+            line-height: 30px;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        li {
+            width: 200px;
+            font-size: 16px;
+            padding-left: 20px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<div class="sence"></div>
+<div class="control">
+    <time>时间：</time>
+    <div class="flagnum">flag:10</div>
+    <div class="restart">重新开始</div>
+    <div class="nd">难度选择
+        <div class="nandu">
+            <div class="jd">简单</div>
+            <div class="yb">一般</div>
+            <div class="kn">困难</div>
+        </div>
+    </div>
+    <div class="paihang">排行榜</div>
+    <ul class="paihangbang">
+        <h1>排行榜</h1>
+        <li>一 ：</li>
+        <li>二 ：</li>
+        <li>三 ：</li>
+    </ul>
+</div>
+</body>
+<script src="jQuery.js"></script>
+<script>
+    $(document).ready(function () {
+        var num = 10;
+        var time1 = 0;
+        var shuliang = 10;
+        var t;
+        var scor = 0;
+        var bestscor = localStorage.best ? JSON.parse(localStorage.best) : [];
+
+        function move() {
+            time1++;
+            $("time").html("时间:" + time1 + "s");
+        }
+
+        t = setInterval(move, 1000);
+        move();
+        creat();
+        $(".restart").click(function () {
+            clearInterval(t);
+            $(".sence").empty();
+            time1 = 0;
+            $("time").html("时间:" + time1 + "s");
+            num = shuliang;
+            t = setInterval(move, 1000);
+            creat();
+        })
+        $(".nd").click(function () {
+            $(".nandu").slideToggle(500);
+        })
+        $(".jd").click(function () {
+            num = 5;
+            shuliang = 5;
+            creat();
+            $(".flagnum").html("flag:" + num);
+        })
+        $(".yb").click(function () {
+            num = 10;
+            shuliang = 10;
+            creat();
+            $(".flagnum").html("flag:" + num);
+        })
+        $(".kn").click(function () {
+            num = 15;
+            shuliang = 15;
+            creat();
+            $(".flagnum").html("flag:" + num);
+        })
+        $(".paihang").click(function () {
+            $(".paihangbang").slideToggle();
+        })
+
+        function creat() {
+            do {
+                $(".sence").empty();
+
+                for (var i = 0; i < 10; i++) {
+                    for (var j = 0; j < 10; j++) {
+                        var isLei = Math.random() > 1 - shuliang / 100;
+                        $("<div>")
+                            .addClass(function () {
+                                if (isLei) {
+                                    return "block lei";
+                                } else {
+                                    return "block";
+                                }
+                            })
+                            .attr("id", i + "-" + j)
+                            .data("pos", {x: i, y: j})
+                            .mousedown(mousedownEvent)
+                            .appendTo($(".sence"))
+                    }
+                }
+            } while ($(".lei").length != num)
+        }
+
+        function mousedownEvent(e) {
+            if (leftclick != null) {
+                if (e.which == 1) {
+                    leftclick.call(this);
+                } else {
+                    rightclick.call(this);
+                }
+            } else {
+                return;
+            }
+        }
+
+        function leftclick() {
+            if ($(this).hasClass("flag")) {
+                return;
+            }
+            if ($(this).hasClass("lei")) {
+                $(".lei").addClass("show");
+                alert("游戏失败");
+                clearInterval(t);
+                $(".sence div").unbind("mousedown");
+                return;
+            } else {
+                $(this).addClass("num");
+                var pos = $(this).data("pos");
+                var n = 0;
+                for (let i = pos.x - 1; i <= pos.x + 1; i++) {
+                    for (let j = pos.y - 1; j <= pos.y + 1; j++) {
+                        if ($("#" + i + "-" + j).hasClass("lei")) {
+                            n++;
+                        }
+                    }
+                }
+                $(this).html(n);
+                if (n == 0) {
+                    for (let i = pos.x - 1; i <= pos.x + 1; i++) {
+                        for (let j = pos.y - 1; j <= pos.y + 1; j++) {
+                            var obj = $("#" + i + "-" + j);
+                            if (obj.length == 1 && !obj.hasClass("num")) {
+                                leftclick.call(obj[0]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function rightclick() {
+            if ($(this).hasClass("num")) {
+                return;
+            }
+            if ($(this).hasClass("flag")) {
+                $(this).removeClass("flag");
+                num++;
+            } else {
+                num--;
+                if (num < 0) {
+                    num++;
+                    alert("失败");
+                    clearInterval(t);
+                    $(".sence div").unbind("mousedown");
+                    return;
+                }
+                $(this).addClass("flag");
+                if (num == 0) {
+                    if ($(".flag").filter(".lei").length == shuliang) {
+                        alert("成功");
+                        clearInterval(t);
+                        scor = time1;
+                        if (bestscor.length < 3 || bestscor.length == 3 && scor < bestscor[2].scors
+                        ) {
+                            var name = prompt("请输入姓名：");
+                            bestscor.push({name, scors: scor});
+                            bestscor.sort(function (a, b) {
+                                if (a.scors < b.scors) {
+                                    return -1;
+                                } else {
+                                    return 1;
+                                }
+                            })
+                            if (bestscor.length > 3) {
+                                bestscor.pop();
+                            }
+                            reWrite();
+                        }
+                        localStorage.best = JSON.stringify(bestscor);
+                        alert("用时：" + scor)
+                    }
+                }
+            }
+            $(".flagnum").html("flag:" + num);
+        }
+
+        $(document).on("contextmenu", function (e) {
+            e.preventDefault();
+        })
+        function reWrite() {
+            $("li").html("");
+
+            if (bestscor) {
+                $(bestscor).each(function (index, v) {
+                    $("li")[index].innerHTML += v.name + " ：" + v.scors;
+                })
+            }
+        }
+        reWrite();
+    })
+</script>
+</html>
